@@ -1,0 +1,7 @@
+{
+    "objectscript.conn": {
+        "server": "win-iris021",
+        "ns": "USER",
+        "active": true
+    }
+}
