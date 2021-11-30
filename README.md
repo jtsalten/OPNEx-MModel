@@ -36,10 +36,10 @@ Hacemos que la clase herede de: (%Persistent, %Populate, %XML.Adaptor, %JSON.Ada
   - Generar con ##class(OPNEx.MModel.Proveedor).Populate(10)
   - Abrir un objeto, con:
 
-    ``language=ObjectScript
+    ```language=ObjectScript
     set obj = ##class(OPNEx.MModel.Proveedor).%OpenId(1)
     zw obj
-    ``
+    ```
 
 - **Desde DBeaver:**
   - Conectar con NameSpace
