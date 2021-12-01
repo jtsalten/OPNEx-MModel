@@ -55,7 +55,7 @@ Hacemos que la clase herede de: (%Persistent, %Populate, %XML.Adaptor, %JSON.Ada
 
 #### Propiedades Calculadas
 
-- **Definir método Facturacion()** como método de clase el cálculo ficticio de facturacion - [ SqlName = FAC_GLOBAL, SqlProc ]
+- **Definir método Facturacion()** como método de clase y Proced. Almacenado - cálculo ficticio de facturacion - [ SqlName = FAC_GLOBAL, SqlProc ]
     return $random(999)_$random(999)
 - **Definir nueva propiedad calculada** que utilice dicho método:
   - Facturacion - [ Calculated, SqlComputeCode = {set {*}=..FacturacionGlobal({ID})}, SqlComputed ]
@@ -64,30 +64,69 @@ Hacemos que la clase herede de: (%Persistent, %Populate, %XML.Adaptor, %JSON.Ada
 #### Métodos de Registro
 
 - **OO.OO - Clase OPNEx.MModel.Proveedor**
-  - *Registro()*: Basicamente recogerá toda la información por parámetro, creará un objeto nuevo y lo salvará
+  - *Registro()*: Basicamente recogerá toda la información por parámetro, creará un objeto nuevo y lo salvará:
+
+    ```language=ObjectScript
+    ClassMethod Registro(pDesc As %String = "", pCIF As %String = "", pCiudad As %String = "", pCodPostal As %String = "", pPais As %String = "España") As %Integer
+    {
+       #dim obj as OPNEx.MModel.Proveedor = ..%New() 
+       set obj.Descripcion = pDesc
+       set obj.CIF = pCIF
+       set obj.Direccion.Ciudad = pCiudad
+       set obj.Direccion.Pais = pPais
+       set obj.Direccion.CodPostal = pCodPostal
+       
+       do obj.%Save()
+       return obj.%Id()
+    }
+    ```
+
   - *RegistroSQL()*: Misma firma que el anterior, pero hara una inserción con SQL Embebido.
+
+    ```language=ObjectScript
+    ClassMethod RegistroSQL(pDesc As %String = "", pCIF As %String = "", pCiudad As %String = "", pCodPostal As %String = "", pPais As %String = "España") As %Integer
+    {
+      &SQL(
+          insert into OPNEx_MModel.Proveedor (Descripcion,CIF,Direccion_Ciudad,Direccion_CodPostal,Direccion_Pais) values (:pDesc,:pCIF,:pCiudad,:pCodPostal,:pPais)
+          )
+      if SQLCODE = 0
+      {
+        &SQL(select LAST_IDENTITY() into :tID from OPNEx_MModel.Proveedor)
+        return tID
+      }
+      return SQLCODE
+    }    
+    ```
+
   - *RegistroJSON()*: Recibe un %DynamicObject con los datos del proveedor a crear y utiliza el %JSONImport:
 
     ```language=ObjectScript
-    return:('$IsObject(pDatos)||(pDatos.%ClassName()'="%DynamicObject")) 0
-    #dim obj as OPNEx.MModel.Proveedor = ..%New()
-    do obj.%JSONImport(pDatos)
-    do obj.%Save()
-    return obj.%Id()
+    ClassMethod RegistroJSON(pDatos As %DynamicObject) As %Integer
+    {
+      return:('$IsObject(pDatos)||(pDatos.%ClassName()'="%DynamicObject")) 0
+      #dim obj as OPNEx.MModel.Proveedor = ..%New()
+      do obj.%JSONImport(pDatos)
+      do obj.%Save()
+      return obj.%Id()
+    }
     ```
 
   - *ActualizaJSON()*: Recibe un %DynamicObject de un proveedor y lo sobrescribe:
 
     ```language=ObjectScript
-    return:('$IsObject(pDatos)||(pDatos.%ClassName()'="%DynamicObject")||(pDatos.Codigo<1)) 0
-    #dim tSC as %Status = 0
-    #dim tProv as OPNEx.MModel.Proveedor = ..%OpenId(pDatos.Codigo)
-    if $IsObject(tProv)
+    ClassMethod ActualizaJSON(pDatos As %DynamicObject) As %Status
     {
-       do tProv.%JSONImport(pDatos)
-       set tSC = tProv.%Save()
+      return:('$IsObject(pDatos)||(pDatos.%ClassName()'="%DynamicObject")||(pDatos.Codigo<1)) 0
+
+      #dim tSC as %Status = 0
+      #dim tProv as OPNEx.MModel.Proveedor = ..%OpenId(pDatos.Codigo)
+      if $IsObject(tProv)
+      {
+        do tProv.%JSONImport(pDatos)
+        set tSC = tProv.%Save()
+      }
+      return tSC
     }
-    return tSC
     ```
 
 - **Global - Clase OPNEx.MModel.Util**

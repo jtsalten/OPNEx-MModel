@@ -1,7 +1,8 @@
 {
     "objectscript.conn": {
         "server": "win-iris021",
-        "ns": "USER",
+        "ns": "MCDNA",
         "active": true
-    }
+    },
+    "objectscript.compileFlags": "ck"
 }
