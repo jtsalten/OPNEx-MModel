@@ -219,7 +219,6 @@ Previamente debe estar configurada en IRIS la aplicación web ``/multimodel``, c
     {
       set tSC = ##class(OPNEx.MModel.Proveedor).%DeleteId(pID)
       write {"ESTADO":(tSC),"ID":(pID)}.%ToJSON()
-
       return $$$OK
     }
     ```

@@ -4,9 +4,15 @@
 Class OPNEx.MModel.Proveedor Extends %Persistent
 {
 
-// Property CIF As %String(PATTERN = "1A8N") [ InitialExpression = {"B"_($random(9999)*10000+$random(9999))} ];
+// Codigo
 
-// Property Facturacion As %Integer [ Calculated, SqlComputeCode = {set {*}=..FacturacionGlobal({ID})}, SqlComputed ];
+// Descripcion
+
+// CIF As %String(PATTERN = "1A8N") [ InitialExpression = {"B"_($random(9999)*10000+$random(9999))} ];
+
+// Direccion
+
+// Facturacion As %Integer [ Calculated, SqlComputeCode = {set {*}=..FacturacionGlobal({ID})}, SqlComputed ];
 
 ClassMethod Registro(pDesc As %String = "", pCIF As %String = "", pCiudad As %String = "", pCodPostal As %String = "", pPais As %String = "España") As %Integer
 {
@@ -45,27 +51,6 @@ ClassMethod RegistroJSON(pDatos As %DynamicObject) As %Integer
 	do obj.%Save()
 	
 	return obj.%Id()
-}
-
-ClassMethod Actualiza(pID As %Integer = "", pDesc As %String = "", pCIF As %String = "", pCiudad As %String = "", pCodPostal As %String = "", pPais As %String = "") As %Status
-{
-	#dim json as %DynamicObject = {}
-	
-	set prov = ##class(OPNEx.MModel.Proveedor).%OpenId(pID)
-
-	do:pDesc'="" json.%Set("Descripcion",pDesc)
-	do:pCIF'="" json.%Set("CIF",pCIF)
-	do:pCiudad'="" json.%Set("Ciudad",pDesc)
-	do:pCodPostal'="" json.%Set("CodPostal",pDesc)
-	do:pPais'="" json.%Set("Pais",pDesc)
-
-	if $IsObject(prov)
-	{
-		do prov.%JSONImport(json)
-		return prov.%Save()
-	}
-	
-	return 0
 }
 
 ClassMethod ActualizaJSON(pDatos As %DynamicObject) As %Status

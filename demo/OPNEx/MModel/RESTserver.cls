@@ -17,9 +17,6 @@ XData UrlMap [ XMLNamespace = "http://www.intersystems.com/urlmap" ]
 <Route Url="/busca/id/:id" Method="GET" Call="BuscaID" Cors="true"/>
 <Route Url="/elimina/id/:id" Method="DELETE" Call="EliminaID" Cors="true"/>
 <Route Url="/echo" Method="GET" Call="GetEcho" Cors="true"/>
-<!--
-	<Map Prefix="/docserver" Forward="%Api.v1.DocServer"/>
--->
 </Routes>
 }
 
@@ -29,7 +26,7 @@ ClassMethod Registro(pDesc As %String = "", pCIF As %String = "", pCiudad As %St
 	// Utiliza los datos recibidos en la URL REST para llamar al método Registro de Proveedor y crear un proveedor nuevo
 	// TBD
 	
-	// Devuelve el ID del nuevo proveedor - Retornado por Registro()
+	// Devuelve JSON {"ID":...} con el ID del nuevo proveedor - Retornado por Registro()
 	// TBD  write...
 	
 	return $$$OK
