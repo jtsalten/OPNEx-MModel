@@ -168,40 +168,58 @@ Previamente debe estar configurada en IRIS la aplicación web ``/multimodel``, c
   - El código es muy sencillo:
 
     ```language=ObjectScript
-    #dim tID as %Integer = ##class(OPNEx.MModel.Proveedor).Registro(pDesc,pCIF,pCiudad,pCodPostal,pPais)
-    write {"ID":(tID)}.%ToJSON()
+    ClassMethod Registro(pDesc As %String = "", pCIF As %String = "", pCiudad As %String = "", pCodPostal As %String = "", pPais As %String = "") As %Status
+    {
+      #dim tID as %Integer = ##class(OPNEx.MModel.Proveedor).Registro(pDesc,pCIF,pCiudad,pCodPostal,pPais)
+      
+      write {"ID":(tID)}.%ToJSON()
+      return $$$OK
+    }
     ```
   
 - **RegistroJSON()**
   - Código:
 
     ```language=ObjectScript
-    #dim tBulkJSON as %String = %request.Content.Read()	
-    #dim tDatos as %DynamicObject = {}.%FromJSON(tBulkJSON)
-    #dim tID as %Integer = ##class(OPNEx.MModel.Proveedor).RegistroJSON(tDatos)
-    write {"ID":(tID)}.%ToJSON()
+    ClassMethod RegistroJSON() As %Status
+    {
+      #dim tBulkJSON as %String = %request.Content.Read()	
+      #dim tDatos as %DynamicObject = {}.%FromJSON(tBulkJSON)
+      #dim tID as %Integer = ##class(OPNEx.MModel.Proveedor).RegistroJSON(tDatos) 
+      
+      write {"ID":(tID)}.%ToJSON()
+      return $$$OK
+    }
     ```
 
 - **BuscaID()** - Busca el proveedor por ID
   - Código:
 
     ```language=ObjectScript
-    set tProv = ##class(OPNEx.MModel.Proveedor).%OpenId(pID)
-    if $IsObject(tProv)
+    ClassMethod BuscaID(pID As %Integer = "") As %Status
     {
+      set tProv = ##class(OPNEx.MModel.Proveedor).%OpenId(pID)
+      if $IsObject(tProv)
+      {
         write tProv.%JSONExport()
-    }
-    else
-    {
+      }
+      else
+      {
         write {"ESTADO":"ERROR - ID indicado no existe"}.%ToJSON()
+      }
+      return $$$OK
     }
-
     ```
 
 - **EliminaID()** - Borrar el proveedor por ID
   - Código:
 
     ```language=ObjectScript
-    set tSC = ##class(OPNEx.MModel.Proveedor).%DeleteId(pID)
-    write {"ESTADO":(tSC),"ID":(pID)}.%ToJSON()
+    ClassMethod EliminaID(pID As %Integer = "") As %Status
+    {
+      set tSC = ##class(OPNEx.MModel.Proveedor).%DeleteId(pID)
+      write {"ESTADO":(tSC),"ID":(pID)}.%ToJSON()
+
+      return $$$OK
+    }
     ```
